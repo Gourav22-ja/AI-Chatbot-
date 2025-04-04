@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrganizeAI - Your Decluttering Assistant</title>
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #4D44DB;
+            --accent-color: #FF6584;
+            --light-bg: #F8F9FA;
+            --dark-text: #2D3748;
+            --light-text: #718096;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: rgb(241, 240, 255);
+            color: var(--dark-text);
+            line-height: 1.6;
+            padding: 40px;
+          
+    background: linear-gradient(to bottom , #a4a4f0, #eff1f4, hwb(302 75% 13%));
+
+
+        }
+        
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            
+            height: 650px;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background-color: var(--white);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tagline {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .chat-container {
+            flex: 1;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background-color: var(--white);
+            
+            /* background: linear-gradient(to bottom, #7F7FD5, #86A8E7, #91EAE4); */
+
+
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.2rem;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background-color: var(--primary-color);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: 0.4rem;
+            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.2);
+        }
+        
+        .bot-message {
+            background-color: #F1F3FF;
+            color: var(--dark-text);
+            align-self: flex-start;
+            border-bottom-left-radius: 0.4rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bot-message a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .input-container {
+            padding: 1rem;
+            background-color: var(--white);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 0.8rem;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 2rem;
+            background-color: var(--light-bg);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        #user-input:focus {
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+        
+        #send-button {
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 10px rgba(108, 99, 255, 0.3);
+        }
+        
+        #send-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        #send-button:active {
+            transform: translateY(0);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.8rem 1.2rem;
+            background-color: #F1F3FF;
+            border-radius: 1.2rem;
+            align-self: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--light-text);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .suggestion-chip {
+            padding: 0.5rem 0.8rem;
+            background-color: rgba(108, 99, 255, 0.1);
+            color: var(--primary-color);
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-chip:hover {
+            background-color: rgba(108, 99, 255, 0.2);
+        }
+        
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .welcome-message h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-message p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .decoration {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(108, 99, 255, 0.05));
+            z-index: 0;
+        }
+        
+        .decoration-1 {
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+        }
+        
+        .decoration-2 {
+            bottom: 100px;
+            left: -80px;
+            width: 250px;
+            height: 250px;
+        }
+        
+        .error-message {
+            max-width: 80%;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.2rem;
+            background-color: #FFE0E0;
+            color: #D32F2F;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.4rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="decoration decoration-1"></div>
+        <div class="decoration decoration-2"></div>
+        
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">O</div>
+                OrganizeAI
+            </div>
+            <div class="tagline">Your personal decluttering assistant</div>
+        </div>
+        
+        <div class="chat-container" id="chat-messages">
+            <div class="welcome-message">
+                <h2>Welcome to OrganizeAI!</h2>
+                <p>I can help you declutter and organize any space in your home or office.</p>
+            </div>
+            
+            <div class="message bot-message">
+                Hello! I'm your AI-powered organization assistant. How can I help you today?
+                <div class="suggestions">
+                    <div class="suggestion-chip">How to start decluttering?</div>
+                    <div class="suggestion-chip">Best closet organization</div>
+                    <div class="suggestion-chip">Kitchen storage ideas</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask me anything about organizing..." autocomplete="off">
+            <button id="send-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            
+            // API key configuration
+            // const API_KEY = "AIzaSyBFdsNIeXw-hTPq-UTBjJZAol86ipua96k";
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBFdsNIeXw-hTPq-UTBjJZAol86ipua96k`;
+            
+            let conversationHistory = [];
+            
+            // Show typing indicator
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typing-indicator';
+                typingDiv.innerHTML = `
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Hide typing indicator
+            function hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+            
+            // Add message to chat
+            function addMessage(message, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                
+                // Simple markdown formatting
+                const formattedMessage = message
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
+                    .replace(/\n/g, '<br>'); // line breaks
+                
+                messageDiv.innerHTML = formattedMessage;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Update conversation history
+                conversationHistory.push({
+                    role: isUser ? 'user' : 'model',
+                    content: message
+                });
+            }
+            
+            // Show error message
+            function showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = message;
+                chatMessages.appendChild(errorDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Remove error after 5 seconds
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 5000);
+            }
+            
+            // Generate response from Gemini API
+            async function generateGeminiResponse(userMessage) {
+                try {
+                    // Craft a specific system prompt for organization assistant
+                    const systemPrompt = "You are OrganizeAI, a helpful assistant specialized in home organization, decluttering, and storage solutions. Provide practical advice for organizing spaces, decluttering methods, and storage solutions. Keep responses focused on organization topics. Be friendly, positive, and encouraging. Format responses with markdown for headings, bullet points, and emphasis where appropriate.";
+                    
+                    // Prepare conversation context for the API
+                    const prompt = `${systemPrompt}\n\nUser: ${userMessage}`;
+                    
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: prompt }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.7,
+                                topK: 40,
+                                topP: 0.95,
+                                maxOutputTokens: 800,
+                            }
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error.message);
+                    }
+                    
+                    // Extract text from response
+                    const geminiResponse = data.candidates[0].content.parts[0].text;
+                    return geminiResponse;
+                    
+                } catch (error) {
+                    console.error('Gemini API error:', error);
+                    showError(`API Error: ${error.message}`);
+                    return `I'm having trouble connecting to my knowledge base. Please check your internet connection or try again later.`;
+                }
+            }
+            
+            // Add suggestions after bot message
+            function addSuggestions() {
+                const possibleFollowUps = [
+                    "How often should I declutter?",
+                    "Best storage for small spaces",
+                    "Digital organization tips",
+                    "Minimalist wardrobe"
+                ];
+                
+                const suggestions = document.createElement('div');
+                suggestions.className = 'suggestions';
+                
+                possibleFollowUps.forEach(text => {
+                    const chip = document.createElement('div');
+                    chip.className = 'suggestion-chip';
+                    chip.textContent = text;
+                    chip.addEventListener('click', () => {
+                        userInput.value = text;
+                        userInput.focus();
+                    });
+                    suggestions.appendChild(chip);
+                });
+                
+                const lastMessage = chatMessages.lastChild;
+                if (lastMessage.classList.contains('bot-message')) {
+                    lastMessage.appendChild(suggestions);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+            
+            // Send message function
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                addMessage(message, true);
+                userInput.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                try {
+                    // Get response from Gemini API
+                    const response = await generateGeminiResponse(message);
+                    
+                    // Hide typing indicator and add response
+                    hideTypingIndicator();
+                    addMessage(response, false);
+                    
+                    // Add suggestion chips after response
+                    addSuggestions();
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+                    addMessage("I'm sorry, I encountered an error while processing your request. Please try again later.", false);
+                }
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Focus input field on load
+            userInput.focus();
+            
+            // Add click handlers for initial suggestion chips
+            document.querySelectorAll('.suggestion-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    userInput.value = chip.textContent;
+                    userInput.focus();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
